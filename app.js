@@ -67,8 +67,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/diagnosis', diagnosisRouter);
 
-app.get('/', (req, res) => res.send("Insha'allah, the best graduation project"));
-
 app.listen(PORT, async() => {
     console.log(`The server is running on http://localhost:${PORT}`);
     await connectToDatabase();

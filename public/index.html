@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Lupira</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Lupira — an AI-powered lupus screening app. Bilingual, plain-language symptom questions translated into a lupus-likelihood result." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#fbf7f5; --surface:#ffffff; --surface-2:#f4ecee;
+    --ink:#2b1e24; --ink-2:#4d3d43; --muted:#7a6a70; --faint:#a3939a;
+    --accent:#8b2c4e; --accent-ink:#ffffff; --accent-wash:#f6e7ec;
+    --line:#e8dee1;
+    --shadow:0 1px 2px rgba(43,30,36,.05), 0 12px 30px -16px rgba(43,30,36,.24);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#1a1216; --surface:#241a1f; --surface-2:#2c1f25;
+      --ink:#f3e9ec; --ink-2:#d6c3ca; --muted:#a68e96; --faint:#6e5b62;
+      --accent:#e2749a; --accent-ink:#241017; --accent-wash:#33202a;
+      --line:#3a2830;
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 16px 34px -16px rgba(0,0,0,.65);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#1a1216; --surface:#241a1f; --surface-2:#2c1f25;
+    --ink:#f3e9ec; --ink-2:#d6c3ca; --muted:#a68e96; --faint:#6e5b62;
+    --accent:#e2749a; --accent-ink:#241017; --accent-wash:#33202a;
+    --line:#3a2830;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 16px 34px -16px rgba(0,0,0,.65);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:"Work Sans", system-ui, sans-serif; margin:0;}
+  h1,h2,h3{font-family:"Fraunces", serif; text-wrap:balance; margin:0;}
+  .mono{font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums;}
+  a{color:inherit; text-decoration:none;}
+
+  .wrap{max-width:1080px; margin:0 auto; padding-inline:24px;}
+  section{padding-block:56px;}
+
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding-block:20px;}
+  .brand{display:flex; align-items:center; gap:9px;}
+  .brand .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(155deg,var(--accent),#5c1c36); display:flex; align-items:center; justify-content:center; color:#fff; font-family:"Fraunces",serif; font-weight:700; font-size:15px;}
+  .brand-name{font-size:15px; font-weight:600;}
+  .nav-cta{border:1px solid var(--line); padding:8px 16px; border-radius:9px; font-size:13px; font-weight:600; background:var(--surface);}
+  .nav-cta:hover{border-color:var(--accent);}
+
+  .hero{display:grid; grid-template-columns:1.05fr 0.95fr; gap:36px; align-items:center; padding-block:36px 56px;}
+  .eyebrow{font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); font-weight:600;}
+  h1.hh{font-size:clamp(2.2rem,4.6vw,3.6rem); line-height:1.02; margin-top:14px;}
+  .hero p.lede{font-size:16.5px; line-height:1.6; color:var(--muted); margin-top:18px; max-width:44ch;}
+  .cta-row{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; align-items:center;}
+  .btn{background:var(--accent); color:var(--accent-ink); padding:12px 22px; border-radius:10px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;}
+  .btn:hover{opacity:.9;}
+  .fine{font-size:12.5px; color:var(--faint);}
+  .notice{margin-top:18px; font-size:12.5px; color:var(--muted); display:flex; gap:8px; align-items:flex-start; max-width:44ch;}
+  .notice span{flex:none;}
+
+  .mock{background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:20px; display:flex; flex-direction:column; gap:12px;}
+  .mock-q{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--accent); font-weight:700;}
+  .mock-text{font-family:"Fraunces",serif; font-size:16px; font-weight:600; line-height:1.4;}
+  .mock-opts{display:flex; flex-direction:column; gap:7px; margin-top:2px;}
+  .mock-opt{border:1.5px solid var(--line); border-radius:9px; padding:9px 12px; font-size:13px; font-weight:500;}
+  .mock-opt.picked{border-color:var(--accent); background:var(--accent-wash);}
+  .mock-lang{display:flex; gap:4px; align-self:flex-end;}
+  .mock-lang span{font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:100px; border:1px solid var(--line);}
+  .mock-lang span.on{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:32px;}
+  .card{border:1px solid var(--line); border-radius:14px; padding:20px; background:var(--surface);}
+  .card h3{font-size:16px; font-weight:600; letter-spacing:-.005em; margin-bottom:8px;}
+  .card p{font-size:13px; line-height:1.6; color:var(--muted); margin:0;}
+
+  .final{text-align:center; padding-block:70px;}
+  .final h2{font-size:clamp(1.6rem,3.6vw,2.4rem);}
+  .final p{color:var(--muted); margin-top:10px;}
+  .final .cta-row{justify-content:center;}
+
+  footer{border-top:1px solid var(--line); padding-block:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--faint);}
+
+  @media (max-width:840px){
+    .hero{grid-template-columns:1fr;}
+    .cards{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><div class="mark">L</div><span class="brand-name">Lupira</span></div>
+    <a class="nav-cta" href="/demo.html">Try the demo</a>
+  </div>
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">AI-powered lupus screening</div>
+      <h1 class="hh">Early lupus signals, in plain language.</h1>
+      <p class="lede">Lupira asks about symptoms and lab results the way a person actually experiences them &mdash; not clinical jargon &mdash; then translates your answers into a lupus-likelihood result, bilingual in English and Arabic.</p>
+      <div class="cta-row">
+        <a class="btn" href="/demo.html">Try the screening demo <span aria-hidden="true">&rarr;</span></a>
+        <span class="fine">Runs in your browser &middot; no data leaves the page</span>
+      </div>
+      <div class="notice"><span>&#9888;&#65039;</span><span>Educational demo &mdash; not a diagnostic tool. Illustrates the real app's flow only.</span></div>
+    </div>
+    <div class="mock" aria-hidden="true">
+      <div class="mock-lang"><span class="on">EN</span><span>AR</span></div>
+      <div class="mock-q">Mucocutaneous</div>
+      <div class="mock-text">Have you noticed unusual hair loss, with the scalp looking otherwise normal?</div>
+      <div class="mock-opts">
+        <div class="mock-opt picked">Yes</div>
+        <div class="mock-opt">No</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="wrap">
+  <div class="cards">
+    <div class="card"><h3>Plain-language questions</h3><p>Real questions from the app itself &mdash; symptoms and self-reported lab results, each with a short explanation, not raw clinical terms.</p></div>
+    <div class="card"><h3>Bilingual, properly</h3><p>A working EN/AR toggle with full right-to-left layout, not just translated labels bolted onto a left-to-right page.</p></div>
+    <div class="card"><h3>A history you can review</h3><p>Every run is saved with its result and answer count &mdash; delete one or clear them all, matching the real app's history API.</p></div>
+  </div>
+</section>
+
+<section class="wrap final">
+  <h2>See how a screening actually plays out.</h2>
+  <p>Step through it question by question, both languages included.</p>
+  <div class="cta-row"><a class="btn" href="/demo.html">Try the screening demo <span aria-hidden="true">&rarr;</span></a></div>
+</section>
+
+<div class="wrap"><footer><span>Lupira &middot; AI-powered lupus detection</span><span><a href="/api-docs">API docs</a></span></footer></div>
+</body>
+</html>
