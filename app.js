@@ -12,6 +12,9 @@ import connectToDatabase from './database/mongodb.js';
 import bodyParser from 'body-parser';
 const app = express();
 app.use(bodyParser.json());
+// Serves public/demo.html at /demo.html — a standalone mini demo of the
+// diagnosis flow, no auth/DB required, for anyone evaluating the API.
+app.use(express.static('public'));
 
 
 const swaggerOptions = {
