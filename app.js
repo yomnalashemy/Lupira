@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -10,7 +11,25 @@ import userRouter from './routes/user.routes.js';
 import diagnosisRouter from './routes/diagnosis.routes.js';
 import connectToDatabase from './database/mongodb.js';
 import bodyParser from 'body-parser';
+import { WEB_APP_URL } from './config/env.js';
 const app = express();
+
+// Auth here is Bearer-token only (no cookies ever read for it — see
+// middlewares/auth.middleware.js), so credentials:true isn't needed.
+// Still an explicit allowlist rather than "*", since this is a real API
+// handling real accounts and health data.
+const allowedOrigins = [
+  WEB_APP_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+].filter(Boolean);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+}));
+
 app.use(bodyParser.json());
 // Serves public/demo.html at /demo.html — a standalone mini demo of the
 // diagnosis flow, no auth/DB required, for anyone evaluating the API.

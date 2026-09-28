@@ -1,6 +1,16 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
-import { JWT_SECRET } from '../config/env.js';
+import { JWT_SECRET, WEB_APP_URL } from '../config/env.js';
+
+// Web-only users have no lupira:// app to catch this redirect — previously
+// the only fallback message was "make sure the app is installed", which is
+// just wrong for someone who signed up on the web. This adds a real
+// continue-to-web-login link alongside the existing app-open attempt,
+// without touching that attempt at all.
+const webContinueButton = (lang, label) =>
+  WEB_APP_URL
+    ? `<div style="margin:32px 0;"><a href="${WEB_APP_URL}/login" style="padding:14px 28px;background-color:#8b2c4e;color:#fff;text-decoration:none;font-size:16px;border-radius:6px;">${label}</a></div>`
+    : '';
 
 export const verifyEmail = async (req, res) => {
   const token = req.query.token;
@@ -47,13 +57,18 @@ export const verifyEmail = async (req, res) => {
             <script>
               window.location.href = "lupira://login";
               setTimeout(() => {
-                document.body.innerHTML = '<h2>${t("If the app didn\\'t open, please make sure it is installed.", "إذا لم يتم فتح التطبيق، يرجى التأكد من أنه مثبت.")}</h2>';
+                var fallback = document.getElementById('web-fallback');
+                if (fallback) fallback.style.display = 'block';
               }, 3000);
             </script>
           </head>
-          <body>
+          <body style="font-family:sans-serif;text-align:center;padding-top:40px;">
             <h2>${t('Your email has been updated successfully!', 'تم تحديث بريدك الإلكتروني بنجاح!')}</h2>
-            District<p><a href="lupira://login">${t('Tap here if nothing happens', 'اضغط هنا إذا لم يحدث شيء')}</a></p>
+            <p><a href="lupira://login">${t('Tap here if nothing happens', 'اضغط هنا إذا لم يحدث شيء')}</a></p>
+            <div id="web-fallback" style="display:none;">
+              <p>${t("If the app didn't open, continue on the web instead:", "إذا لم يفتح التطبيق، تابعي عبر الويب:")}</p>
+              ${webContinueButton(lang, t('Continue to Lupira Web', 'المتابعة إلى لوبيرا ويب'))}
+            </div>
           </body>
         </html>
       `);
@@ -105,13 +120,18 @@ export const verifyEmail = async (req, res) => {
         <script>
           window.location.href = "lupira://login";
           setTimeout(() => {
-            document.body.innerHTML = '<h2>${t("If the app didn\\'t open, please make sure it is installed.", "إذا لم يتم فتح التطبيق، يرجى التأكد من أنه مثبت.")}</h2>';
+            var fallback = document.getElementById('web-fallback');
+            if (fallback) fallback.style.display = 'block';
           }, 3000);
         </script>
       </head>
-      <body>
+      <body style="font-family:sans-serif;text-align:center;padding-top:40px;">
         <h2>${t('Your email has been verified!', 'تم التحقق من بريدك الإلكتروني!')}</h2>
         <p><a href="lupira://login">${t('Tap here if nothing happens', 'اضغط هنا إذا لم يحدث شيء')}</a></p>
+        <div id="web-fallback" style="display:none;">
+          <p>${t("If the app didn't open, continue on the web instead:", "إذا لم يفتح التطبيق، تابعي عبر الويب:")}</p>
+          ${webContinueButton(lang, t('Continue to Lupira Web', 'المتابعة إلى لوبيرا ويب'))}
+        </div>
       </body>
     </html>
   `);

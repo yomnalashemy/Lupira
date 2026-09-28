@@ -1,3 +1,5 @@
+import { WEB_APP_URL } from '../config/env.js';
+
 export const handleDeeplink = async (req, res) => {
   const { to, token, lang = 'en' } = req.query;
 
@@ -8,7 +10,15 @@ export const handleDeeplink = async (req, res) => {
   const encodedToken = encodeURIComponent(token);
   const encodedLang = encodeURIComponent(lang);
   const schemeUrl = `lupira://${to}?token=${encodedToken}&lang=${encodedLang}`;
-  const webUrl = `/api/auth/verify-email?token=${encodedToken}&lang=${encodedLang}`;
+  // was hardcoded to /api/auth/verify-email regardless of `to` — for
+  // to=reset-password that sent people to the wrong endpoint entirely,
+  // and there was no real reset-password web page to send them to even
+  // if it had been right. Routes by destination now.
+  const webUrl = to === 'reset-password'
+    ? (WEB_APP_URL ? `${WEB_APP_URL}/reset-password?token=${encodedToken}&lang=${encodedLang}` : null)
+    : `/api/auth/verify-email?token=${encodedToken}&lang=${encodedLang}`;
+
+  const buttonLabel = to === 'reset-password' ? 'Reset Password via Website' : 'Verify via Website';
 
   res.send(`
     <!DOCTYPE html>
@@ -25,13 +35,13 @@ export const handleDeeplink = async (req, res) => {
       <body>
         <h2>Opening the Lupira App...</h2>
         <p>If nothing happens, <a href="${schemeUrl}">tap here</a>.</p>
-        <div style="margin: 32px 0;">
-          <a href="${webUrl}" class="button">Verify via Website</a>
+        <div id="web-fallback" style="display:none; margin: 32px 0;">
+          ${webUrl ? `<a href="${webUrl}" class="button">${buttonLabel}</a>` : '<p>Please open this link on the device with the Lupira app installed.</p>'}
         </div>
         <script>
           window.location.href = "${schemeUrl}";
           setTimeout(function() {
-            document.body.innerHTML += '<p>If the app didn\'t open, <a href="${webUrl}">click here to verify via website</a>.</p>';
+            document.getElementById('web-fallback').style.display = 'block';
           }, 3000);
         </script>
       </body>
