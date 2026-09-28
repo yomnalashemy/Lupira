@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Tajawal:wght@400;500;700&display=swap");
+@import "tailwindcss";
+
+/* Same brand tokens as the illustrative mini demo (demo-app/) — this is
+   the real app, that one stays a self-contained portfolio piece, but
+   there's no reason for Lupira to have two different color systems. */
+@theme {
+  --font-serif: "Fraunces", serif;
+  --font-sans: "Work Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --font-arabic: "Tajawal", "Work Sans", system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  --bg: #fbf7f5;
+  --surface: #ffffff;
+  --surface-2: #f4ecee;
+  --ink: #2b1e24;
+  --ink-2: #4d3d43;
+  --muted: #7a6a70;
+  --faint: #a3939a;
+  --accent: #8b2c4e;
+  --accent-ink: #ffffff;
+  --accent-wash: #f6e7ec;
+  --line: #e8dee1;
+  --ring: rgba(139, 44, 78, 0.2);
+  --good: #0ca30c;
+  --critical: #a63232;
+}
+
+:root:not([data-theme="light"]) {
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+    --bg: #1a1216;
+    --surface: #241a1f;
+    --surface-2: #2c1f25;
+    --ink: #f3e9ec;
+    --ink-2: #d6c3ca;
+    --muted: #a68e96;
+    --faint: #6e5b62;
+    --accent: #e2749a;
+    --accent-ink: #241017;
+    --accent-wash: #33202a;
+    --line: #3a2830;
+    --ring: rgba(226, 116, 154, 0.25);
+    --good: #3fbf70;
+    --critical: #e66767;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1216;
+  --surface: #241a1f;
+  --surface-2: #2c1f25;
+  --ink: #f3e9ec;
+  --ink-2: #d6c3ca;
+  --muted: #a68e96;
+  --faint: #6e5b62;
+  --accent: #e2749a;
+  --accent-ink: #241017;
+  --accent-wash: #33202a;
+  --line: #3a2830;
+  --ring: rgba(226, 116, 154, 0.25);
+  --good: #3fbf70;
+  --critical: #e66767;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+body[dir="rtl"] {
+  font-family: var(--font-arabic);
+}
+
+[dir="rtl"] .font-serif {
+  font-family: var(--font-arabic);
+}
+
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
